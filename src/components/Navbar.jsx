@@ -1,8 +1,7 @@
-// components/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { FaBars, FaTimes } from 'react-icons/fa'; // Import hamburger and close icons
+import { FaBars, FaTimes } from 'react-icons/fa';
 
-// Move navItems outside the component since it's static
+// Static nav items
 const navItems = [
   { id: '#heroSection', label: 'Home' },
   { id: '#AboutMe', label: 'About' },
@@ -12,62 +11,54 @@ const navItems = [
 ];
 
 function Navbar() {
-  const [activeSection, setActiveSection] = useState('#home'); // Track active section
-  const [isMenuOpen, setIsMenuOpen] = useState(false); // Track dropdown menu state
+  const [activeSection, setActiveSection] = useState('#heroSection'); // Default to heroSection
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleNavClick = (e, sectionId) => {
     e.preventDefault();
     const section = document.querySelector(sectionId);
-
     if (section) {
       section.scrollIntoView({ behavior: 'smooth' });
-      triggerAnimations(section); // Trigger animations on click
-      setActiveSection(sectionId); // Set the clicked section as active
-      setIsMenuOpen(false); // Close dropdown on mobile after click
+      triggerAnimations(section);
+      setActiveSection(sectionId);
+      setIsMenuOpen(false);
     }
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   const triggerAnimations = (section) => {
     const animatedElements = section.querySelectorAll('.animate-on-scroll');
     animatedElements.forEach((el) => {
       el.classList.remove('visible');
       void el.offsetWidth; // Force reflow
-      setTimeout(() => {
-        el.classList.add('visible');
-      }, 100);
+      setTimeout(() => el.classList.add('visible'), 100);
     });
   };
 
   useEffect(() => {
     const observerOptions = {
-      root: null, // Use viewport as root
-      rootMargin: '0px', // No margin
-      threshold: 0.5, // Trigger when 50% of section is visible
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5,
     };
 
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
         if (entry.isIntersecting) {
           const sectionId = `#${entry.target.id}`;
-          setActiveSection(sectionId); // Update active section
-          triggerAnimations(entry.target); // Trigger animations when section is in view
+          setActiveSection(sectionId);
+          triggerAnimations(entry.target);
         }
       });
     };
 
     const observer = new IntersectionObserver(observerCallback, observerOptions);
-
-    // Observe all sections
     navItems.forEach((item) => {
       const section = document.querySelector(item.id);
       if (section) observer.observe(section);
     });
 
-    // Cleanup observer on unmount
     return () => {
       navItems.forEach((item) => {
         const section = document.querySelector(item.id);
@@ -81,7 +72,7 @@ function Navbar() {
       <div className="navbar-container">
         <div className="navbar-content">
           <div className="navbar-logo">
-            <a href="#home" onClick={(e) => handleNavClick(e, '#home')}>
+            <a href="#heroSection" onClick={(e) => handleNavClick(e, '#heroSection')}>
               <img
                 src={`${process.env.PUBLIC_URL}/img/Logo.png`}
                 alt="VoidStack Logo"
